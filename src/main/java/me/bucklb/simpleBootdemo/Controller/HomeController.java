@@ -54,6 +54,11 @@ public class HomeController {
 //    public String getHome() {
     public String getHome(HttpServletResponse httpServletResponse) {
         LOGGER.info("greet");
+
+        if( true ) {
+            throw new ArithmeticException("testing");
+        }
+
         return homeService.greeting();
     }
 
