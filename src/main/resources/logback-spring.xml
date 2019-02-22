@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <springProperty scope="context" name="appName" source="spring.application.name"/>
+  <springProperty scope="context" name="pattern" source="logback.pattern"/>
+  <springProperty scope="context" name="appVersion" source="build.version"/>
+  <contextName>${appName}</contextName>
+  <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+
+  <appender name="consoleAppenderJSON" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>
+          {"time":"%d{dd-MM-yyyy HH:mm:ss.SSS}","app": {"version":"${appVersion}","name":"${appName}"},"traceID":"%X{X-B3-TraceId}","spanID":"%X{X-B3-SpanId}","pid": "${PID:-}","thread":"%thread","level":"%level","logger":"%logger{36}","msg":"%replace(%replace(%replace(%m){'([\r\n]+)', '\\n'}){'([\u0000-\u001f])',''}){'([\"\'])', '\\$1'}","stackTrace":"%replace(%replace(%replace(%ex){'([\r\n]+)', '\\n'}){'([\u0000-\u001f])',''}){'([\"\'])', '\\$1'}"}%nopex %n
+      </pattern>
+    </encoder>
+  </appender>
+
+  <appender name="consoleAppenderStandard" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level) %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <root level="info">
+    <springProfile name="local">
+      <appender-ref ref="consoleAppenderStandard"/>
+    </springProfile>
+    <springProfile name="!local">
+      <appender-ref ref="consoleAppenderJSON"/>
+    </springProfile>
+  </root>
+
+</configuration>
